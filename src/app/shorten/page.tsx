@@ -99,7 +99,10 @@ export default function ShortenPage() {
           <CardContent className="p-6">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div>
-                <Label htmlFor="url" className="block text-sm font-medium text-foreground mb-2 ml-1">
+                <Label
+                  htmlFor="url"
+                  className="block text-sm font-medium text-foreground mb-2 ml-1"
+                >
                   URL to Shorten
                 </Label>
                 <Input
@@ -116,7 +119,10 @@ export default function ShortenPage() {
                 )}
               </div>
               <div>
-                <Label htmlFor="customAlias" className="block text-sm font-medium text-foreground mb-2 ml-1">
+                <Label
+                  htmlFor="customAlias"
+                  className="block text-sm font-medium text-foreground mb-2 ml-1"
+                >
                   Custom Alias (Optional)
                 </Label>
                 <Input
@@ -133,7 +139,10 @@ export default function ShortenPage() {
                 )}
               </div>
               <div>
-                <Label htmlFor="expirationTime" className="block text-sm font-medium text-foreground mb-2 ml-1">
+                <Label
+                  htmlFor="expirationTime"
+                  className="block text-sm font-medium text-foreground mb-2 ml-1"
+                >
                   Expiration Time (Optional)
                 </Label>
                 <Input
@@ -146,7 +155,11 @@ export default function ShortenPage() {
                   Default: 24 hours, Max: 30 days
                 </p>
               </div>
-              <Button type="submit" className="w-full bg-card-foreground text-card py-2" disabled={isLoading}>
+              <Button
+                type="submit"
+                className="w-full bg-card-foreground text-card py-2"
+                disabled={isLoading}
+              >
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -167,7 +180,10 @@ export default function ShortenPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <Label htmlFor="shortenedUrl" className="block text-sm font-medium text-foreground">
+                <Label
+                  htmlFor="shortenedUrl"
+                  className="block text-sm font-medium text-foreground"
+                >
                   Shortened URL
                 </Label>
                 <div className="flex mt-1">

@@ -34,10 +34,10 @@ export default function RootLayout({
         </div>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <div className="relative flex min-h-screen flex-col">
-        <Navbar />
-        <main className="container mx-auto px-4 py-8 flex-1">
-          {children}
-        </main>
+            <Navbar />
+            <main className="container mx-auto px-4 py-8 flex-1">
+              {children}
+            </main>
           </div>
           <Toaster />
         </ThemeProvider>

@@ -49,7 +49,6 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-
   const NavItems = () => (
     <>
       {navItems.map((item) => (

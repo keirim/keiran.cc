@@ -198,28 +198,28 @@ export default function LandingPage() {
                   'Optimized for speed, your files are ready in seconds.',
               },
             ].map(({ icon: Icon, title, description }, index) => (
-                <motion.div
-                  key={index}
-                  className={cn(
-                    'rounded-xl p-8 shadow-lg border border-primary/10',
-                    'backdrop-blur-sm hover:shadow-xl transition-all duration-300',
-                    'bg-gradient-to-br from-background/80 to-background/40',
-                    'relative group',
-                  )}
-                  variants={cardVariants}
-                  whileHover="hover"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 opacity-0 group-hover:opacity-100 transition duration-500 rounded-xl blur-lg" />
-                  <div className="relative">
-                    <Icon className="w-16 h-16 text-primary mb-6 transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110" />
-                  </div>
-                  <h2 className="text-2xl font-bold mb-4 relative transition-transform duration-500 group-hover:translate-y-1">
-                    {title}
-                  </h2>
-                  <p className="text-muted-foreground text-lg relative transition-opacity duration-500 group-hover:opacity-80">
-                    {description}
-                  </p>
-                </motion.div>
+              <motion.div
+                key={index}
+                className={cn(
+                  'rounded-xl p-8 shadow-lg border border-primary/10',
+                  'backdrop-blur-sm hover:shadow-xl transition-all duration-300',
+                  'bg-gradient-to-br from-background/80 to-background/40',
+                  'relative group',
+                )}
+                variants={cardVariants}
+                whileHover="hover"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 opacity-0 group-hover:opacity-100 transition duration-500 rounded-xl blur-lg" />
+                <div className="relative">
+                  <Icon className="w-16 h-16 text-primary mb-6 transition-transform duration-500 group-hover:rotate-12 group-hover:scale-110" />
+                </div>
+                <h2 className="text-2xl font-bold mb-4 relative transition-transform duration-500 group-hover:translate-y-1">
+                  {title}
+                </h2>
+                <p className="text-muted-foreground text-lg relative transition-opacity duration-500 group-hover:opacity-80">
+                  {description}
+                </p>
+              </motion.div>
             ))}
           </motion.div>
         </motion.div>
