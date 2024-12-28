@@ -25,7 +25,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className="dark">
       <body
         className={cn(
-          'w-full min-h-screen dark:bg-black bg-white dark:bg-grid-white/[0.2] bg-grid-black/[0.2] overflow-y-auto',
+          'w-full min-h-screen bg-background dark:bg-grid-white/[0.1] bg-grid-black/[0.1] overflow-y-auto',
           inter.className,
         )}
       >
@@ -34,10 +34,10 @@ export default function RootLayout({
         </div>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <div className="relative flex min-h-screen flex-col">
-            <Navbar />
-            <main className="container mx-auto px-4 py-8 flex-1">
-              {children}
-            </main>
+        <Navbar />
+        <main className="container mx-auto px-4 py-8 flex-1">
+          {children}
+        </main>
           </div>
           <Toaster />
         </ThemeProvider>

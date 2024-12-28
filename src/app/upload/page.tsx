@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import FileUpload from '@/components/file-upload';
-import Updates from '@/components/updates';
 import { Toaster } from '@/components/ui/toaster';
 import { toast } from '@/hooks/use-toast';
 import { motion } from 'framer-motion';
@@ -22,14 +21,14 @@ export default function UploadPage() {
       transition={{ duration: 0.7, ease: 'easeInOut' }}
       className="container mx-auto px-4 py-8"
     >
-      <Card className="w-full max-w-3xl mx-auto">
+      <Card className="w-full max-w-3xl mx-auto mt-8">
         <CardHeader>
-          <CardTitle className="text-4xl md:text-5xl font-extrabold text-center text-foreground">
+          <CardTitle className="text-4xl md:text-5xl font-extrabold text-center text-foreground mt-8">
             Upload Your Files
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-lg md:text-xl text-center text-muted-foreground mb-8">
+          <p className="text-lg md:text-xl text-center text-muted-foreground mb-4">
             Unlimited uploads for free, forever.
           </p>
           <FileUpload
@@ -46,14 +45,6 @@ export default function UploadPage() {
           )}
         </CardContent>
       </Card>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        className="mt-12 max-w-3xl mx-auto"
-      >
-        <Updates />
-      </motion.div>
       <Toaster />
     </motion.div>
   );

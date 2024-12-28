@@ -4,52 +4,27 @@ import { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import {
-  Upload,
-  Loader2,
-  File,
-  CheckCircle,
-  Download,
-  Link,
-  Settings,
-} from 'lucide-react';
+import { Upload, Loader2, File, CheckCircle, Link } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import confetti from 'canvas-confetti';
 import FileUrlDisplay from '@/components/file-url-display';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 
 const MAX_FILE_SIZE = 1024 * 1024 * 1024; // 1GB in bytes
 
-const DOMAINS = ['keiran.cc', 'e-z.software', 'keirandev.me', 'keiran.tech'];
-
-export default function FileUpload({
-  setToast,
-  setUploadedFileUrl,
-}: {
-  setToast: (message: string, description: string) => void;
-  setUploadedFileUrl: (url: string | null) => void;
-}) {
+export default function FileUpload({ setToast, setUploadedFileUrl }: { setToast: (message: string, description: string) => void; setUploadedFileUrl: (url: string | null) => void; }) {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [localUploadedFileUrl, setLocalUploadedFileUrl] = useState<
-    string | null
-  >(null);
+  const [localUploadedFileUrl, setLocalUploadedFileUrl] = useState<string | null>(null);
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [rawUrl, setRawUrl] = useState<string | null>(null);
   const [buttonLabel, setButtonLabel] = useState('Upload');
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [selectedDomain, setSelectedDomain] = useState(DOMAINS[0]);
+
+  useEffect(() => {
+    if (uploadSuccess) {
+      handleSparkle();
+    }
+  }, [uploadSuccess]);
 
   const handleSparkle = () => {
     confetti({
@@ -59,12 +34,6 @@ export default function FileUpload({
     });
   };
 
-  useEffect(() => {
-    if (uploadSuccess) {
-      handleSparkle();
-    }
-  }, [uploadSuccess]);
-
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const selectedFile = acceptedFiles[0];
     if (selectedFile.size > MAX_FILE_SIZE) {
@@ -72,7 +41,7 @@ export default function FileUpload({
     } else {
       setFile(selectedFile);
     }
-  }, []);
+  }, [setToast]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -88,7 +57,7 @@ export default function FileUpload({
     try {
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('domain', selectedDomain);
+      formData.append('domain', 'keiran.cc');
 
       const response = await fetch('/api/upload', {
         method: 'POST',
@@ -107,18 +76,19 @@ export default function FileUpload({
       setButtonLabel('Uploaded');
 
       setTimeout(() => {
-        setButtonLabel('Upload');
-        setUploadSuccess(false);
+        resetUploadState();
       }, 1000);
     } catch (error) {
-      setToast(
-        'Upload failed',
-        'There was an error uploading your file. Please try again.',
-      );
+      setToast('Upload failed', 'There was an error uploading your file. Please try again.');
     } finally {
       setUploading(false);
       setFile(null);
     }
+  };
+
+  const resetUploadState = () => {
+    setButtonLabel('Upload');
+    setUploadSuccess(false);
   };
 
   const copyRawLink = () => {
@@ -127,102 +97,26 @@ export default function FileUpload({
     }
   };
 
-  const generateShareXConfig = () => {
-    const config = {
-      Name: 'AnonHost',
-      DestinationType: 'ImageUploader, TextUploader, FileUploader',
-      RequestMethod: 'POST',
-      RequestURL: `${selectedDomain}/api/upload`,
-      Body: 'MultipartFormData',
-      FileFormName: 'file',
-      URL: '$json:rawUrl$',
-      ThumbnailURL: '$json:imageUrl$',
-    };
-
-    const blob = new Blob([JSON.stringify(config, null, 2)], {
-      type: 'application/json',
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'AnonHost.sxcu';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
-
   return (
-    <Card className="w-full max-w-2xl mx-auto overflow-hidden shadow-lg transition-shadow duration-300 hover:shadow-xl">
+    <Card className="w-full max-w-2xl mx-auto overflow-hidden shadow-lg transition-shadow duration-300 hover:shadow-xl border-none">
       <CardContent className="p-6">
-        <div className="flex justify-end mb-4">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" size="icon">
-                <Settings className="h-4 w-4" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80">
-              <div className="grid gap-4">
-                <div className="space-y-2">
-                  <h4 className="font-medium leading-none">Settings</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Configure your upload settings
-                  </p>
-                </div>
-                <div className="grid gap-2">
-                  <div className="grid grid-cols-3 items-center gap-4">
-                    <label htmlFor="domain">Domain</label>
-                    <Select
-                      onValueChange={setSelectedDomain}
-                      defaultValue={selectedDomain}
-                    >
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Select a domain" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {DOMAINS.map((domain) => (
-                          <SelectItem key={domain} value={domain}>
-                            {domain}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <Button onClick={generateShareXConfig}>
-                  <Download className="mr-2 h-4 w-4" />
-                  Generate ShareX Config
-                </Button>
-              </div>
-            </PopoverContent>
-          </Popover>
-        </div>
         <div
           {...getRootProps()}
           className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all duration-300 ${
-            isDragActive
-              ? 'border-primary bg-primary/5'
-              : 'border-muted hover:border-primary/50'
+            isDragActive ? 'border-primary bg-primary/5' : 'border-muted hover:border-primary/50'
           }`}
         >
           <input {...getInputProps()} />
           {file ? (
             <div className="flex items-center justify-center space-x-4">
               <File className="h-8 w-8 text-primary" />
-              <span className="text-lg font-medium text-foreground">
-                {file.name}
-              </span>
+              <span className="text-lg font-medium text-foreground">{file.name}</span>
             </div>
           ) : (
             <div>
               <Upload className="h-12 w-12 text-primary mx-auto mb-4" />
-              <p className="text-lg mb-2 font-semibold text-foreground">
-                Drag & drop a file here, or click to select a file
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Max file size: 1GB
-              </p>
+              <p className="text-lg mb-2 font-semibold text-foreground">Drag & drop a file here, or click to select a file</p>
+              <p className="text-sm text-muted-foreground">Max file size: 1GB</p>
             </div>
           )}
         </div>
@@ -254,21 +148,14 @@ export default function FileUpload({
         {uploading && (
           <div className="mt-4">
             <Progress value={uploadProgress} className="w-full" />
-            <p className="text-sm text-center mt-2 text-muted-foreground">
-              Uploading...
-            </p>
+            <p className="text-sm text-center mt-2 text-muted-foreground">Uploading...</p>
           </div>
         )}
         {localUploadedFileUrl && (
           <div className="mt-6">
             <FileUrlDisplay url={localUploadedFileUrl} />
             <div className="mt-2 flex justify-end">
-              <Button
-                onClick={copyRawLink}
-                variant="outline"
-                size="sm"
-                className="text-sm"
-              >
+              <Button onClick={copyRawLink} variant="outline" size="sm" className="text-sm">
                 <Link className="mr-2 h-4 w-4" />
                 Copy Raw Link
               </Button>

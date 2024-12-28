@@ -19,7 +19,7 @@ import {
 import ThemeSwitcher from '@/components/theme-switcher';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
-const branding = process.env.NEXT_PUBLIC_BRANDING || 'keiran.cc';
+const branding = 'AnonHost';
 
 const navItems = [
   { href: '/upload', icon: Upload, label: 'Upload' },
@@ -27,7 +27,6 @@ const navItems = [
   { href: '/pastes', icon: Code, label: 'Pastes' },
   { href: '/stats', icon: BarChart2, label: 'Stats' },
   { href: '/gallery', icon: Cat, label: 'Gallery' },
-  { href: '/about', icon: User, label: 'About' },
   {
     href: 'https://github.com/KeiranScript/keiran.cc',
     icon: Github,
@@ -35,12 +34,9 @@ const navItems = [
   },
 ];
 
-const tracks = ['/tracks/linqfy.mp3', '/tracks/iwtm.ogx'];
-
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
   const pathname = usePathname();
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -53,19 +49,6 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const playRandomTrack = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-      } else {
-        const randomTrack = tracks[Math.floor(Math.random() * tracks.length)];
-        audioRef.current.src = randomTrack;
-        audioRef.current.play();
-        setIsPlaying(true);
-      }
-    }
-  };
 
   const NavItems = () => (
     <>
@@ -108,31 +91,9 @@ export default function Navbar() {
         </Link>
         <div className="hidden md:flex items-center space-x-4">
           <NavItems />
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={playRandomTrack}
-            className={`transition-colors ${isPlaying ? 'text-primary' : ''}`}
-          >
-            <Music className="h-5 w-5" />
-            <span className="sr-only">
-              {isPlaying ? 'Pause' : 'Play'} random track
-            </span>
-          </Button>
           <ThemeSwitcher />
         </div>
         <div className="md:hidden flex items-center">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={playRandomTrack}
-            className={`transition-colors ${isPlaying ? 'text-primary' : ''}`}
-          >
-            <Music className="h-6 w-6" />
-            <span className="sr-only">
-              {isPlaying ? 'Pause' : 'Play'} random track
-            </span>
-          </Button>
           <ThemeSwitcher />
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>

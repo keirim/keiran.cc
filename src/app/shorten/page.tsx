@@ -10,25 +10,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/components/ui/use-toast';
-import { Link, Loader2, Copy, Settings, Download } from 'lucide-react';
+import { Link, Loader2, Copy } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 
 const formSchema = z.object({
   url: z.string().url({ message: 'Please enter a valid URL' }),
@@ -55,12 +43,9 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-const DOMAINS = ['keiran.cc', 'e-z.software', 'keirandev.me', 'keiran.tech'];
-
 export default function ShortenPage() {
   const [shortenedUrl, setShortenedUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedDomain, setSelectedDomain] = useState(DOMAINS[0]);
   const {
     register,
     handleSubmit,
@@ -75,7 +60,7 @@ export default function ShortenPage() {
       const response = await fetch('/api/shorten', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, domain: selectedDomain }),
+        body: JSON.stringify({ ...data, domain: 'keiran.cc' }),
       });
 
       const result = await response.json();
@@ -93,28 +78,9 @@ export default function ShortenPage() {
     }
   };
 
-  const generateShareXConfig = () => {
-    const config = {
-      Name: 'AnonHost URL Shortener',
-      DestinationType: 'URLShortener',
-      RequestMethod: 'POST',
-      RequestURL: `https://${selectedDomain}/api/shorten`,
-      Body: 'JSON',
-      Data: '{"url":"$input$"}',
-      URL: '$json:shortUrl$',
-    };
-
-    const blob = new Blob([JSON.stringify(config, null, 2)], {
-      type: 'application/json',
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'AnonHost-URLShortener.sxcu';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast.success('Copied to clipboard!');
   };
 
   return (
@@ -124,97 +90,63 @@ export default function ShortenPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Card className="w-full max-w-md mx-auto">
-          <CardHeader className="flex justify-between items-center">
-            <CardTitle className="text-2xl font-bold">
+        <Card className="w-full max-w-3xl mx-auto mt-8">
+          <CardHeader className="flex justify-between items-center p-6">
+            <CardTitle className="text-3xl md:text-4xl font-extrabold text-center text-foreground mt-8">
               Shorten Your URL
             </CardTitle>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" size="icon">
-                  <Settings className="h-4 w-4" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80">
-                <div className="grid gap-4">
-                  <div className="space-y-2">
-                    <h4 className="font-medium leading-none">Settings</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Configure your URL shortener settings
-                    </p>
-                  </div>
-                  <div className="grid gap-2">
-                    <div className="grid grid-cols-3 items-center gap-4">
-                      <Label htmlFor="domain">Domain</Label>
-                      <Select
-                        onValueChange={setSelectedDomain}
-                        defaultValue={selectedDomain}
-                      >
-                        <SelectTrigger className="w-[180px]">
-                          <SelectValue placeholder="Select a domain" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {DOMAINS.map((domain) => (
-                            <SelectItem key={domain} value={domain}>
-                              {domain}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  <Button onClick={generateShareXConfig}>
-                    <Download className="mr-2 h-4 w-4" />
-                    Generate ShareX Config
-                  </Button>
-                </div>
-              </PopoverContent>
-            </Popover>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <CardContent className="p-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div>
-                <Label htmlFor="url">URL to Shorten</Label>
+                <Label htmlFor="url" className="block text-sm font-medium text-foreground mb-2 ml-1">
+                  URL to Shorten
+                </Label>
                 <Input
                   id="url"
                   type="url"
                   placeholder="https://example.com"
                   {...register('url')}
+                  className="mt-1 block w-full"
                 />
                 {errors.url && (
-                  <p className="text-sm text-destructive mt-1">
+                  <p className="text-sm text-red-600 mt-1">
                     {errors.url.message}
                   </p>
                 )}
               </div>
               <div>
-                <Label htmlFor="customAlias">Custom Alias (Optional)</Label>
+                <Label htmlFor="customAlias" className="block text-sm font-medium text-foreground mb-2 ml-1">
+                  Custom Alias (Optional)
+                </Label>
                 <Input
                   id="customAlias"
                   type="text"
                   placeholder="my-custom-url"
                   {...register('customAlias')}
+                  className="mt-1 block w-full"
                 />
                 {errors.customAlias && (
-                  <p className="text-sm text-destructive mt-1">
+                  <p className="text-sm text-red-600 mt-1">
                     {errors.customAlias.message}
                   </p>
                 )}
               </div>
               <div>
-                <Label htmlFor="expirationTime">
+                <Label htmlFor="expirationTime" className="block text-sm font-medium text-foreground mb-2 ml-1">
                   Expiration Time (Optional)
                 </Label>
                 <Input
                   id="expirationTime"
                   type="datetime-local"
                   {...register('expirationTime')}
+                  className="mt-1 block w-full"
                 />
-                <p className="text-sm text-muted-foreground mt-1">
+                <p className="text-sm text-primary/50 mt-1 ml-1">
                   Default: 24 hours, Max: 30 days
                 </p>
               </div>
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button type="submit" className="w-full bg-card-foreground text-card py-2" disabled={isLoading}>
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -230,12 +162,14 @@ export default function ShortenPage() {
             </form>
             {shortenedUrl && (
               <motion.div
-                className="mt-4"
+                className="mt-6"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <Label htmlFor="shortenedUrl">Shortened URL</Label>
+                <Label htmlFor="shortenedUrl" className="block text-sm font-medium text-foreground">
+                  Shortened URL
+                </Label>
                 <div className="flex mt-1">
                   <Input
                     id="shortenedUrl"
@@ -251,10 +185,7 @@ export default function ShortenPage() {
                           type="button"
                           variant="outline"
                           className="ml-2"
-                          onClick={() => {
-                            navigator.clipboard.writeText(shortenedUrl);
-                            toast.success('Copied to clipboard!');
-                          }}
+                          onClick={() => copyToClipboard(shortenedUrl)}
                         >
                           <Copy className="h-4 w-4" />
                         </Button>

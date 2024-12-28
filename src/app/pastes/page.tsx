@@ -110,12 +110,9 @@ const languageOptions = [
   { value: 'zig', label: 'Zig' },
 ];
 
-const DOMAINS = ['keiran.cc', 'e-z.software', 'keirandev.me', 'keiran.tech'];
-
 export default function PastePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [pasteUrl, setPasteUrl] = useState<string | null>(null);
-  const [selectedDomain, setSelectedDomain] = useState(DOMAINS[0]);
   const {
     control,
     register,
@@ -138,7 +135,7 @@ export default function PastePage() {
       const response = await fetch('/api/pastes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, domain: selectedDomain }),
+        body: JSON.stringify({ ...data, domain: 'keiran.cc' }),
       });
 
       if (!response.ok) {
@@ -155,36 +152,6 @@ export default function PastePage() {
     }
   };
 
-  const generateShareXConfig = () => {
-    const config = {
-      Name: 'AnonHost Paste',
-      DestinationType: 'TextUploader',
-      RequestMethod: 'POST',
-      RequestURL: `https://${selectedDomain}/api/pastes`,
-      Body: 'MultipartFormData',
-      Arguments: {
-        title: '$input:Title$',
-        description: '$input:Description$',
-        language: '$input:Language$',
-        content: '$input:Content$',
-        expirationTime: '$input:ExpirationTime$',
-      },
-      URL: '$json:url$',
-    };
-
-    const blob = new Blob([JSON.stringify(config, null, 2)], {
-      type: 'application/json',
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'AnonHost-Paste.sxcu';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
-
   return (
     <div className="container mx-auto px-4 py-8">
       <motion.div
@@ -192,52 +159,11 @@ export default function PastePage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <Card className="w-full max-w-4xl mx-auto">
-          <CardHeader className="flex justify-between items-center">
-            <CardTitle className="text-2xl font-bold">
-              Create a New Paste
+        <Card className="w-full max-w-3xl mx-auto mt-8">
+          <CardHeader className="flex justify-between items-center p-6">
+            <CardTitle className="text-3xl md:text-4xl font-extrabold text-center text-foreground mt-8">
+              Create a Paste
             </CardTitle>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" size="icon">
-                  <Settings className="h-4 w-4" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80">
-                <div className="grid gap-4">
-                  <div className="space-y-2">
-                    <h4 className="font-medium leading-none">Settings</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Configure your paste settings
-                    </p>
-                  </div>
-                  <div className="grid gap-2">
-                    <div className="grid grid-cols-3 items-center gap-4">
-                      <Label htmlFor="domain">Domain</Label>
-                      <Select
-                        onValueChange={setSelectedDomain}
-                        defaultValue={selectedDomain}
-                      >
-                        <SelectTrigger className="w-[180px]">
-                          <SelectValue placeholder="Select a domain" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {DOMAINS.map((domain) => (
-                            <SelectItem key={domain} value={domain}>
-                              {domain}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  <Button onClick={generateShareXConfig}>
-                    <Download className="mr-2 h-4 w-4" />
-                    Generate ShareX Config
-                  </Button>
-                </div>
-              </PopoverContent>
-            </Popover>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
