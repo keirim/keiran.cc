@@ -28,7 +28,7 @@ const navItems = [
   { href: '/stats', icon: BarChart2, label: 'Stats' },
   { href: '/gallery', icon: Cat, label: 'Gallery' },
   {
-    href: 'https://github.com/KeiranScript/keiran.cc',
+    href: 'https://github.com/keirim/keiran.cc',
     icon: Github,
     label: 'Source',
   },
